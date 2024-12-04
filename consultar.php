@@ -1,11 +1,18 @@
 <?php
-include 'funciones.inc';
+
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+include_once 'funciones.inc.php';
+
 $pdo = conectarDB();
+
 $comerciales = obtenerComerciales($pdo);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $idComercial = $_POST['comercial'];
-    $ventas = obtenerVentasDeComercial($pdo, $idComercial);
+    $codComercial = $_POST['comercial'];
+    $ventas = obtenerVentasDeComercial($pdo, $codComercial);
 }
 ?>
 
@@ -21,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="comercial">Seleccione un comercial:</label>
         <select name="comercial" id="comercial" required>
             <?php foreach ($comerciales as $comercial): ?>
-                <option value="<?= $comercial['id'] ?>"><?= $comercial['nombre'] ?></option>
+                <option value="<?= $comercial['codigo'] ?>"><?= $comercial['nombre'] ?></option>
             <?php endforeach; ?>
         </select>
         <button type="submit">Consultar</button>
@@ -31,19 +38,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <h2>Ventas realizadas</h2>
         <table border="1">
             <tr>
-                <th>ID</th>
+                <th>Código Comercial</th>
                 <th>Fecha</th>
                 <th>Producto</th>
                 <th>Cantidad</th>
-                <th>Precio Total</th>
             </tr>
             <?php foreach ($ventas as $venta): ?>
                 <tr>
-                    <td><?= $venta['id'] ?></td>
+                    <td><?= $venta['codComercial'] ?></td>
                     <td><?= $venta['fecha'] ?></td>
-                    <td><?= $venta['producto'] ?></td>
+                    <td><?= $venta['refProducto'] ?></td>
                     <td><?= $venta['cantidad'] ?></td>
-                    <td><?= $venta['total'] ?></td>
                 </tr>
             <?php endforeach; ?>
         </table>

@@ -1,5 +1,3 @@
-<?php include 'funciones.inc'; ?>
-
 <!DOCTYPE html>
 <html lang="es">
 <head>
