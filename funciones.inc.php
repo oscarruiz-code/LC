@@ -30,15 +30,20 @@ function obtenerVentas($pdo) {
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
-function obtenerVentasDeComercial($pdo, $codComercial) {
-    $stmt = $pdo->prepare('SELECT * FROM Ventas WHERE codComercial = ?');
-    $stmt->execute([$codComercial]);
+function obtenerVentasPorComercio($pdo, $comercioId) {
+    $stmt = $pdo->prepare('SELECT * FROM Ventas WHERE codComercial = :codComercial');
+    $stmt->execute(['codComercial' => $comercioId]);
     return $stmt->fetchAll(PDO::FETCH_ASSOC);
 }
 
 function insertarVenta($pdo, $codComercial, $refProducto, $cantidad, $fecha) {
-    $stmt = $pdo->prepare('INSERT INTO Ventas (codComercial, refProducto, cantidad, fecha) VALUES (?, ?, ?, ?)');
-    return $stmt->execute([$codComercial, $refProducto, $cantidad, $fecha]);
+    try {
+        $stmt = $pdo->prepare('INSERT INTO Ventas (codComercial, refProducto, cantidad, fecha) VALUES (?, ?, ?, ?)');
+        return $stmt->execute([$codComercial, $refProducto, $cantidad, $fecha]);
+    } catch (PDOException $e) {
+        echo 'Error: ' . $e->getMessage();
+        return false;
+    }
 }
 
 function obtenerVenta($pdo, $codComercial, $refProducto, $fecha) {
@@ -53,9 +58,16 @@ function modificarVenta($pdo, $codComercial, $refProducto, $fecha, $cantidad) {
 }
 
 function eliminarVenta($pdo, $codComercial, $refProducto, $fecha) {
-    $stmt = $pdo->prepare('DELETE FROM Ventas WHERE codComercial = ? AND refProducto = ? AND fecha = ?');
-    return $stmt->execute([$codComercial, $refProducto, $fecha]);
+    try {
+        $stmt = $pdo->prepare('DELETE FROM Ventas WHERE codComercial = ? AND refProducto = ? AND fecha = ?');
+        $stmt->execute([$codComercial, $refProducto, $fecha]);
+        return $stmt->rowCount() > 0; // Asegura que se eliminó al menos un registro
+    } catch (PDOException $e) {
+        echo 'Error: ' . $e->getMessage();
+        return false;
+    }
 }
+
 
 function tieneVentasAsociadas($pdo, $refProducto) {
     $stmt = $pdo->prepare('SELECT COUNT(*) FROM Ventas WHERE refProducto = ?');
@@ -67,12 +79,18 @@ function eliminarProducto($pdo, $refProducto) {
     if (tieneVentasAsociadas($pdo, $refProducto)) {
         return "No se puede eliminar el producto porque tiene ventas asociadas.";
     }
-    $stmt = $pdo->prepare('DELETE FROM Productos WHERE referencia = ?');
-    if ($stmt->execute([$refProducto])) {
-        return "Producto eliminado correctamente.";
+    try {
+        $stmt = $pdo->prepare('DELETE FROM Productos WHERE referencia = ?');
+        if ($stmt->execute([$refProducto])) {
+            return "Producto eliminado correctamente.";
+        }
+        return "Error al eliminar el producto.";
+    } catch (PDOException $e) {
+        echo 'Error: ' . $e->getMessage();
+        return "Error al eliminar el producto.";
     }
-    return "Error al eliminar el producto.";
 }
+
 
 function tieneVentasDeComercial($pdo, $codComercial) {
     $stmt = $pdo->prepare('SELECT COUNT(*) FROM Ventas WHERE codComercial = ?');
@@ -90,4 +108,5 @@ function eliminarComercial($pdo, $codComercial) {
     }
     return "Error al eliminar el comercial.";
 }
+
 ?>
