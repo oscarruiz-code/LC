@@ -13,16 +13,16 @@
     <nav>
         <ul>
             <!-- Enlace a la página de consultar registros -->
-            <li><a href="../php/consultar.php">Consultar</a></li>
+            <li><a href="vistas/vistaconsultar.php">Consultar</a></li>
 
             <!-- Enlace a la página de insertar registros -->
-            <li><a href="../php/insertar.php">Insertar</a></li>
+            <li><a href="vistas/vistainsertar.php">Insertar</a></li>
 
             <!-- Enlace a la página de modificar registros -->
-            <li><a href="../php/modificar.php">Modificar</a></li>
+            <li><a href="vistas/vistamodificar.php">Modificar</a></li>
 
             <!-- Enlace a la página de eliminar registros -->
-            <li><a href="../php/eliminar.php">Eliminar</a></li>
+            <li><a href="vistas/vistaeliminar.php">Eliminar</a></li>
         </ul>
     </nav>
 </body>
